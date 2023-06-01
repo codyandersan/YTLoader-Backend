@@ -1,0 +1,23 @@
+{
+  "name": "ytloader",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.4.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "ytdl-core": "^4.11.4",
+    "ytsr": "^3.8.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
