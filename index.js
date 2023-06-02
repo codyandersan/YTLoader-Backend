@@ -2,7 +2,7 @@ const express = require("express");
 const ytdl = require("./ytdl-core/index");
 const ytsr = require('ytsr');
 const cors = require('cors');
-
+const path = require('path');
 const downloadAndMerge = require('./downloadAndMerge');
 
 const app = express();
@@ -69,14 +69,16 @@ app.get("/search", async (req, res) => {
 })
 
 app.get("/download", async (req, res) => {
-    try {
-        await downloadAndMerge();
-        // The file was successfully created and merged
-        res.status(200).sendFile("./video.mkv")
-    } catch (error) {
-        // There was an error creating or merging the file
-        res.status(500).send({'Error:': error});
-    }
+    const videoUrl = req.query.videoUrl
+    const audioItag = Number.parseInt(req.query.audioItag)
+    const videoItag = Number.parseInt(req.query.videoItag)
+
+    await downloadAndMerge(videoUrl, videoItag, audioItag);
+    // The file was successfully created and merged
+    console.log("Merge Successful")
+    res.setHeader('Content-Disposition', `attachment; filename="video.mkv"`);
+    res.status(200).sendFile(path.join(__dirname, 'video.mkv'))
+
 })
 
 

@@ -12,13 +12,13 @@ if (fs.existsSync('./video.mkv')) {
     fs.unlinkSync('./video.mkv');
 }
 
-const downloadAndMerge = () => {
+const downloadAndMerge = (videoUrl, videoItag, audioItag) => {
     return new Promise((resolve, reject) => {
         // Global constants
-        // videoUrl, videoItag, audioItag
-        const videoUrl = 'https://www.youtube.com/watch?v=7c3-Gei5j4w';
-        const audioItag = 251
-        const videoItag = 137
+        
+        // const videoUrl = 'https://www.youtube.com/watch?v=7c3-Gei5j4w';
+        // const audioItag = 251
+        // const videoItag = 137
 
         const tracker = {
             start: Date.now(),
