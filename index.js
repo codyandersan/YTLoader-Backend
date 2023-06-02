@@ -3,6 +3,8 @@ const ytdl = require("./ytdl-core/index");
 const ytsr = require('ytsr');
 const cors = require('cors');
 
+const downloadAndMerge = require('./downloadAndMerge');
+
 const app = express();
 
 app.use(cors());
@@ -66,6 +68,16 @@ app.get("/search", async (req, res) => {
     });
 })
 
+app.get("/download", async (req, res) => {
+    try {
+        await downloadAndMerge();
+        // The file was successfully created and merged
+        res.status(200).sendFile("./video.mkv")
+    } catch (error) {
+        // There was an error creating or merging the file
+        res.status(500).send({'Error:': error});
+    }
+})
 
 
 const port = parseInt(process.env.PORT) || 8080;
