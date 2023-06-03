@@ -2,8 +2,12 @@ const express = require("express");
 const ytdl = require("./ytdl-core/index");
 const ytsr = require('ytsr');
 const cors = require('cors');
+const cron = require('node-cron');
 const path = require('path');
-const downloadAndMerge = require('./downloadAndMerge');
+const downloadVideo = require('./downloadVideo');
+const deleteExpiredFiles = require('./cleanup');
+const downloadAudio = require("./downloadAudio");
+
 
 const app = express();
 
@@ -68,19 +72,55 @@ app.get("/search", async (req, res) => {
     });
 })
 
-app.get("/download", async (req, res) => {
+app.get("/download_video", (req, res) => {
+
+    // Eg: /download_video?videoUrl=https://www.youtube.com/watch?v=8sLS2knUa6Y&videoItag=160&audioItag=251&filename=Phir%20Aur%20Kya%20Chahiye%20-%20YTLoader
+
     const videoUrl = req.query.videoUrl
     const audioItag = Number.parseInt(req.query.audioItag)
     const videoItag = Number.parseInt(req.query.videoItag)
+    const filename = `${req.query.filename} (${audioItag}${videoItag})`
+    //filename must not contain any extension
+    downloadVideo(videoUrl, videoItag, audioItag, filename, () => {
+        // The file was successfully created and merged
+        console.log("Merge Successful")
+        res.setHeader('Content-Disposition', `attachment; filename=${filename}.mkv`);
+        res.status(200).sendFile(path.join(__dirname, "downloads", `${filename}.mkv`))
+    }, (err) => {
+        res.status(500).send({
+            error: err
+        })
+    });
 
-    await downloadAndMerge(videoUrl, videoItag, audioItag);
-    // The file was successfully created and merged
-    console.log("Merge Successful")
-    res.setHeader('Content-Disposition', `attachment; filename="video.mkv"`);
-    res.status(200).sendFile(path.join(__dirname, 'video.mkv'))
+
 
 })
 
+app.get("/download_audio", async (req, res) => {
+
+
+    // Eg: `/download_audio?videoUrl=https://www.youtube.com/watch?v=8sLS2knUa6Y&audioItag=251&filename=Phir%20Aur%20Kya%20Chahiye%20-%20YTLoader`
+
+    const audioUrl = req.query.audioUrl
+    const audioItag = Number.parseInt(req.query.audioItag)
+    const filename = `${req.query.filename} (${audioItag})`
+    //filename must not contain any extension
+    downloadAudio(audioUrl, audioItag, filename, () => {
+        // The file was successfully created
+        console.log("Download Successful")
+        res.setHeader('Content-Disposition', `attachment; filename=${filename}.m4a`);
+        res.status(200).sendFile(path.join(__dirname, "downloads", `${filename}.m4a`))
+    }, (err) => {
+        res.status(500).send({
+            error: err
+        })
+    });
+})
+
+
+cron.schedule('0 * * * *', deleteExpiredFiles);
+// * * * * * - every min
+// 0 * * * * - every hour
 
 const port = parseInt(process.env.PORT) || 8080;
 
