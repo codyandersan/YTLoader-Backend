@@ -5,8 +5,8 @@
 // const ffmpeg = require('ffmpeg-static');
 
 // const downloadVideo = (videoUrl, videoItag, audioItag, filename, callback, onError) => {
-//     const tempFilePath = `./downloads/${filename}.temp`;
-//     const outputFilePath = `./downloads/${filename}.mkv`;
+//     const tempFilePath = `./${filename}.temp`;
+//     const outputFilePath = `./${filename}.mkv`;
 
 //     if (fs.existsSync(outputFilePath)) {
 //         // Same file of same quality already exists,
@@ -108,9 +108,9 @@ const downloadVideo = (videoUrl, videoItag, audioItag, filename, callback, onErr
     // Check if the file already exists
     try {
 
-        const tempFilePath = `./downloads/${filename}.temp`;
+        const tempFilePath = `./${filename}.temp`;
 
-        if (fs.existsSync(`./downloads/${filename}.mkv`)) {
+        if (fs.existsSync(`./${filename}.mkv`)) {
             // Same file of same quality already exists,
             // so return it instead of downloading a new one.
             callback();
@@ -174,7 +174,7 @@ const downloadVideo = (videoUrl, videoItag, audioItag, filename, callback, onErr
 
         ffmpegProcess.on('close', (code) => {
             if (code === 0) {
-                fs.renameSync(tempFilePath, `./downloads/${filename}.mkv`);
+                fs.renameSync(tempFilePath, `./${filename}.mkv`);
                 console.log('File created and merged successfully.');
                 process.stdout.write('\n\n\n\n');
                 clearInterval(progressbarHandle);
