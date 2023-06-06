@@ -10,7 +10,6 @@ const ffmpeg = require('ffmpeg-static');
 const downloadVideo = (videoUrl, videoItag, audioItag, filename, callback, onError) => {
 
     const filepath = `/tmp/${filename}.mkv`
-    const subtitleFile = "/home/prakhar/Codes/Reactions/YTLoader/YTLoader-Backend/Phir Aur Kya Chahiye| Zara Hatke Zara Bachke| Vicky K, Sara Ali K, Arijit Singh,Sachin-Jigar,Amitabh.en.xml"
 
     if (fs.existsSync(filepath)) {
         // Same file of same quality already exists,
@@ -91,6 +90,8 @@ const downloadVideo = (videoUrl, videoItag, audioItag, filename, callback, onErr
         ],
     });
     ffmpegProcess.on('close', () => {
+        callback()
+        return
         console.log('done');
 
         // Cleanup
