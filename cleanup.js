@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const tempDir = './downloads/';
+const tempDir = '/tmp/';
 
 function deleteExpiredFiles() {
   fs.readdir(tempDir, (err, files) => {

@@ -1,5 +1,3 @@
-//Based on: https://github.com/fent/node-ytdl-core/blob/master/example/ffmpeg.js
-
 const cp = require('child_process');
 const readline = require('readline');
 const fs = require('fs');
@@ -8,9 +6,8 @@ const ffmpeg = require('ffmpeg-static');
 
 // Global constants
 const downloadVideo = (videoUrl, videoItag, audioItag, filename, callback, onError) => {
-
+    // , callback, 
     const filepath = `/tmp/${filename}.mkv`
-    const subtitleFile = "/home/prakhar/Codes/Reactions/YTLoader/YTLoader-Backend/Phir Aur Kya Chahiye| Zara Hatke Zara Bachke| Vicky K, Sara Ali K, Arijit Singh,Sachin-Jigar,Amitabh.en.xml"
 
     if (fs.existsSync(filepath)) {
         // Same file of same quality already exists,
@@ -66,6 +63,7 @@ const downloadVideo = (videoUrl, videoItag, audioItag, filename, callback, onErr
         readline.moveCursor(process.stdout, 0, -3);
     };
 
+    // Start the ffmpeg child process
     const ffmpegProcess = cp.spawn(ffmpeg, [
         // Remove ffmpeg's console spamming
         '-loglevel', '8', '-hide_banner',
@@ -123,3 +121,8 @@ const downloadVideo = (videoUrl, videoItag, audioItag, filename, callback, onErr
 
 }
 module.exports = downloadVideo
+
+const videoUrl = 'https://www.youtube.com/watch?v=7c3-Gei5j4w';
+
+
+downloadVideo(videoUrl, 244, 251, "meravideo", () => console.log("ho gya!"), (err) => { console.log(err) })

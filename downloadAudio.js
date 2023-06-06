@@ -3,8 +3,8 @@ const readline = require('readline');
 const ytdl = require('./ytdl-core/index');
 
 const downloadAudio = (audioUrl, audioItag, filename, callback, onError) => {
-  const tempFilePath = `./${filename}.temp`;
-  const outputFile = `./${filename}.m4a`;
+  const tempFilePath = `/tmp/${filename}.temp`;
+  const outputFile = `/tmp/${filename}.m4a`;
 
   if (fs.existsSync(outputFile)) {
     // Same file of same quality already exists,
