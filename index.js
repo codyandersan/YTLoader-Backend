@@ -85,9 +85,9 @@ app.get("/download_video", (req, res) => {
         // The file was successfully created and merged
         console.log("Merge Successful")
         res.setHeader('Content-Disposition', `attachment; filename=${filename}.mkv`);
-        res.status(200).sendFile(path.join("/tmp", `${filename}.mkv`))
+        return res.status(200).sendFile(path.join("/tmp", `${filename}.mkv`))
     }, (err) => {
-        res.status(500).send({
+        return res.status(500).send({
             error: err
         })
     });
@@ -109,9 +109,9 @@ app.get("/download_audio", async (req, res) => {
         // The file was successfully created
         console.log("Download Successful")
         res.setHeader('Content-Disposition', `attachment; filename=${filename}.m4a`);
-        res.status(200).sendFile(path.join("/tmp", `${filename}.m4a`))
+        return res.status(200).sendFile(path.join("/tmp", `${filename}.m4a`))
     }, (err) => {
-        res.status(500).send({
+        return res.status(500).send({
             error: err
         })
     });
