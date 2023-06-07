@@ -7,6 +7,7 @@ const path = require('path');
 const downloadVideo = require('./downloadVideo');
 const deleteExpiredFiles = require('./cleanup');
 const downloadAudio = require("./downloadAudio");
+const downloadSubtitles = require("./downloadSubtitles");
 
 
 const app = express();
@@ -16,6 +17,7 @@ app.use(cors());
 app.get("/", (req, res) => {
     res.status(200).send("Visit any endpoint!")
 })
+
 //No need, can diretly scrap the url with get_details
 app.get("/get_audio", async (req, res) => {
     // Takes the Youtube video URL and the audio bitrate, returns the url
@@ -28,8 +30,9 @@ app.get("/get_audio", async (req, res) => {
     const info = await ytdl.getInfo(videoUrl);
     const url = info.formats.find(format => format.hasAudio && format.audioBitrate === Number.parseInt(req.query.bitrate)).url;
     res.status(200).send({ success: true, url: url });
-
 })
+
+
 
 app.get("/get_details", async (req, res) => {
     // Takes the Youtube video URL and returns details
@@ -72,29 +75,53 @@ app.get("/search", async (req, res) => {
     });
 })
 
+app.get("/download_subtitles", (req, res) => {
+    const url = req.query.url;
+
+    downloadSubtitles(
+        url,
+        (filename) => {
+            // The file was successfully created and merged
+            console.log("Download Successful");
+            res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
+            res.status(200).sendFile(path.join("/tmp", filename));
+        },
+        (err) => {
+            if (!res.headersSent) {
+                // Send the error response only if headers haven't been sent yet
+                console.error(err)
+                res.status(500).send({ error: err });
+            }
+        }
+    );
+});
+
 app.get("/download_video", (req, res) => {
+    const videoUrl = req.query.videoUrl;
+    const audioItag = Number.parseInt(req.query.audioItag);
+    const videoItag = Number.parseInt(req.query.videoItag);
+    const filename = `${req.query.filename} (${audioItag}${videoItag})`;
 
-    // Eg: /download_video?videoUrl=https://www.youtube.com/watch?v=8sLS2knUa6Y&videoItag=160&audioItag=251&filename=Phir%20Aur%20Kya%20Chahiye%20-%20YTLoader
-
-    const videoUrl = req.query.videoUrl
-    const audioItag = Number.parseInt(req.query.audioItag)
-    const videoItag = Number.parseInt(req.query.videoItag)
-    const filename = `${req.query.filename} (${audioItag}${videoItag})`
-    //filename must not contain any extension
-    downloadVideo(videoUrl, videoItag, audioItag, filename, () => {
-        // The file was successfully created and merged
-        console.log("Merge Successful")
-        res.setHeader('Content-Disposition', `attachment; filename=${filename}.mkv`);
-        return res.status(200).sendFile(path.join("/tmp", `${filename}.mkv`))
-    }, (err) => {
-        return res.status(500).send({
-            error: err
-        })
-    });
-
-
-
-})
+    downloadVideo(
+        videoUrl,
+        videoItag,
+        audioItag,
+        filename,
+        () => {
+            // The file was successfully created and merged
+            console.log("Merge Successful");
+            res.setHeader('Content-Disposition', `attachment; filename=${filename}.mkv`);
+            res.status(200).sendFile(path.join("/tmp", `${filename}.mkv`));
+        },
+        (err) => {
+            if (!res.headersSent) {
+                // Send the error response only if headers haven't been sent yet
+                console.error(err)
+                res.status(500).send({ error: err });
+            }
+        }
+    );
+});
 
 app.get("/download_audio", async (req, res) => {
 
@@ -111,9 +138,11 @@ app.get("/download_audio", async (req, res) => {
         res.setHeader('Content-Disposition', `attachment; filename=${filename}.m4a`);
         return res.status(200).sendFile(path.join("/tmp", `${filename}.m4a`))
     }, (err) => {
-        return res.status(500).send({
-            error: err
-        })
+        if (!res.headersSent) {
+            // Send the error response only if headers haven't been sent yet
+            console.error(err)
+            res.status(500).send({ error: err });
+        }
     });
 })
 

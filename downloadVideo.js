@@ -8,13 +8,19 @@ const ffmpeg = require('ffmpeg-static');
 
 // Global constants
 const downloadVideo = (videoUrl, videoItag, audioItag, filename, callback, onError) => {
+    //Kill process if it takes more than 10min to return
+    const timeout = setTimeout(() => {
+        onError("Process took longer than expected")
+        return
+    }, 100000)
 
     const filepath = `/tmp/${filename}.mkv`
 
     if (fs.existsSync(filepath)) {
         // Same file of same quality already exists,
         // so return it instead of downloading a new one.
-        callback();
+        clearTimeout(timeout);
+        callback()
         return;
     }
 
@@ -30,6 +36,7 @@ const downloadVideo = (videoUrl, videoItag, audioItag, filename, callback, onErr
     const audio = ytdl(videoUrl, { filter: (format) => format.itag === audioItag })
         .on("error", (error) => {
             onError(`Error downloading audio: ${error.message}`);
+            clearTimeout(timeout);
             return
         })
         .on('progress', (_, downloaded, total) => {
@@ -39,6 +46,7 @@ const downloadVideo = (videoUrl, videoItag, audioItag, filename, callback, onErr
     const video = ytdl(videoUrl, { filter: (format) => format.itag === videoItag })
         .on('error', (error) => {
             onError(`Error downloading video: ${error.message}`);
+            clearTimeout(timeout);
             return
         })
         .on('progress', (_, downloaded, total) => {
@@ -90,16 +98,19 @@ const downloadVideo = (videoUrl, videoItag, audioItag, filename, callback, onErr
         ],
     });
     ffmpegProcess.on('close', () => {
-        callback()
-        return
-        console.log('done');
-
         // Cleanup
         process.stdout.write('\n\n\n\n');
         clearInterval(progressbarHandle);
+        clearTimeout(timeout);
+        callback()
+        return
+        console.log('done');
     });
 
+
+
     ffmpegProcess.on('error', () => {
+        clearTimeout(timeout);
         onError("Error while merging..")
         return
     });
