@@ -33,7 +33,10 @@ const downloadVideo = (videoUrl, videoItag, audioItag, filename, callback, onErr
 
     // Get audio and video streams
 
-    const audio = ytdl(videoUrl, { filter: (format) => format.itag === audioItag })
+    const audio = ytdl(videoUrl, {
+        filter: (format) => format.itag === audioItag,
+        highWaterMark: 1 << 25
+    })
         .on("error", (error) => {
             onError(`Error downloading audio: ${error.message}`);
             clearTimeout(timeout);
@@ -43,7 +46,10 @@ const downloadVideo = (videoUrl, videoItag, audioItag, filename, callback, onErr
             tracker.audio = { downloaded, total };
         });
 
-    const video = ytdl(videoUrl, { filter: (format) => format.itag === videoItag })
+    const video = ytdl(videoUrl, {
+        filter: (format) => format.itag === videoItag,
+        highWaterMark: 1 << 25
+    })
         .on('error', (error) => {
             onError(`Error downloading video: ${error.message}`);
             clearTimeout(timeout);

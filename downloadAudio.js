@@ -19,7 +19,10 @@ const downloadAudio = (audioUrl, audioItag, filename, callback, onError) => {
     return;
   }
 
-  const audio = ytdl(audioUrl, { filter: (format) => format.itag === audioItag })
+  const audio = ytdl(audioUrl, {
+    filter: (format) => format.itag === audioItag,
+    highWaterMark: 1 << 25
+  })
     .on("error", (error) => {
       clearTimeout(timeout);
       onError(`Error downloading audio: ${error.message}`);
