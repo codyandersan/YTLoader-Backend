@@ -20,7 +20,7 @@ function deleteExpiredFiles() {
           console.error(`Error reading file stats for ${file}:`, err);
           return;
         }
-        
+
 
         const createTime = new Date(stats.ctime);
         const age = now - createTime;

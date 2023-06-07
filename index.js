@@ -147,9 +147,13 @@ app.get("/download_audio", async (req, res) => {
 })
 
 
+cron.schedule('*/14 * * * *', () => {
+    fetch("https://ytloader-backend.onrender.com")
+});
 cron.schedule('0 * * * *', deleteExpiredFiles);
 // * * * * * - every min
 // 0 * * * * - every hour
+// */14 * * * * - every 14min
 
 const port = parseInt(process.env.PORT) || 8080;
 
