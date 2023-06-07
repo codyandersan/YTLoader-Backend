@@ -7,7 +7,7 @@ const downloadAudio = (audioUrl, audioItag, filename, callback, onError) => {
   const timeout = setTimeout(() => {
     onError("Process took longer than expected")
     return
-  }, 100000)
+  }, 600000)
   const tempFilePath = `/tmp/${filename}.temp`;
   const outputFile = `/tmp/${filename}.m4a`;
 

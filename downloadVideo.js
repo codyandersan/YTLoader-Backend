@@ -12,7 +12,7 @@ const downloadVideo = (videoUrl, videoItag, audioItag, filename, callback, onErr
     const timeout = setTimeout(() => {
         onError("Process took longer than expected")
         return
-    }, 100000)
+    }, 600000)
 
     const filepath = `/tmp/${filename}.mkv`
 
