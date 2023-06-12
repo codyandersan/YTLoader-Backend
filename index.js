@@ -48,6 +48,7 @@ app.get("/get_details", async (req, res) => {
         details: {
             title: info.videoDetails.title,
             channel: info.videoDetails.author.name,
+            thumbnail: info.videoDetails.thumbnails.slice(-1)[0].url,
             embed_url: info.videoDetails.embed.iframeUrl,
             formats: info.formats
         }

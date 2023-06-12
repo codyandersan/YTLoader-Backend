@@ -2,3 +2,4 @@
 node_modules/*
 Spacefile
 downloads/*
+test.js
