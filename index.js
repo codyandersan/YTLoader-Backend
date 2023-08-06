@@ -1,6 +1,6 @@
 const express = require("express");
 const ytdl = require("./ytdl-core/index");
-const ytsr = require('ytsr');
+const youtubesearchapi = require("youtube-search-api");
 const cors = require('cors');
 const cron = require('node-cron');
 const path = require('path');
@@ -69,7 +69,11 @@ app.get("/search", async (req, res) => {
             message: "Please provide a search query"
         });
     }
-    const results = await ytsr(query, { pages: 1, limit: 15 });
+    
+    const results = await youtubesearchapi.GetListByKeyword(query,
+                                                            playlist=false,
+                                                            15)
+    
     res.status(200).send({
         success: true,
         results: results.items
