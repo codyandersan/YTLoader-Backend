@@ -105,7 +105,8 @@ app.get("/download_video", (req, res) => {
     const videoUrl = req.query.videoUrl;
     const audioItag = Number.parseInt(req.query.audioItag);
     const videoItag = Number.parseInt(req.query.videoItag);
-    const filename = `${req.query.filename} (${audioItag}${videoItag})`;
+    
+    const filename = `${req.query.filename} (${Math.round((new Date()).getTime() / 1000)})`;
 
     downloadVideo(
         videoUrl,
@@ -135,7 +136,7 @@ app.get("/download_audio", async (req, res) => {
 
     const audioUrl = req.query.audioUrl
     const audioItag = Number.parseInt(req.query.audioItag)
-    const filename = `${req.query.filename} (${audioItag})`
+    const filename = `${req.query.filename} (${Math.round((new Date()).getTime() / 1000)})`
     //filename must not contain any extension
     downloadAudio(audioUrl, audioItag, filename, () => {
         // The file was successfully created
