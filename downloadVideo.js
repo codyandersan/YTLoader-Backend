@@ -19,9 +19,10 @@ const downloadVideo = (videoUrl, videoItag, audioItag, filename, callback, onErr
     if (fs.existsSync(filepath)) {
         // Same file of same quality already exists,
         // so return it instead of downloading a new one.
-        clearTimeout(timeout);
-        callback()
-        return;
+        // clearTimeout(timeout);
+        // callback()
+        // return;
+        fs.unlinkSync(filepath) //delete file if it exists as it can be a partial download too
     }
 
     const tracker = {
